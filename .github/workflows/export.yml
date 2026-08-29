@@ -1,0 +1,24 @@
+name: Export ERPNext Images
+on:
+  workflow_dispatch:
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Pull images
+        run: |
+          docker pull mariadb:10.6
+          docker pull redis:6-alpine
+          docker pull frappe/erpnext:version-15
+      - name: Save to tar
+        run: |
+          docker save mariadb:10.6 -o mariadb_10_6.tar
+          docker save redis:6-alpine -o redis_6_alpine.tar
+          docker save frappe/erpnext:version-15 -o erpnext15.tar
+      - name: Upload to Release
+        uses: softprops/action-gh-release@v2
+        with:
+          tag_name: v1.0
+          files: "*.tar"
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
