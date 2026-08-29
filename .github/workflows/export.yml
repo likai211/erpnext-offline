@@ -9,22 +9,21 @@ jobs:
   build:
     runs-on: ubuntu-latest
     steps:
-      - name: Pull images
+      - name: 安装导出工具
         run: |
-          docker pull redis:8.6-alpine
-          docker pull mariadb:10.11
-          docker pull frappe/erpnext:v15.48.0
+          sudo apt-get update
+          sudo apt-get install -y skopeo
 
-      - name: Save to tar
+      - name: 流式导出镜像为tar
         run: |
-          docker save redis:8.6-alpine -o redis_8.6-alpine.tar
-          docker save mariadb:10.11 -o mariadb_10.11.tar
-          docker save frappe/erpnext:v15.48.0 -o erpnext_v15.48.0.tar
+          skopeo copy docker://redis:8.6-alpine docker-archive:redis_8.6-alpine.tar
+          skopeo copy docker://mariadb:10.11 docker-archive:mariadb_10.11.tar
+          skopeo copy docker://frappe/erpnext:v15.48.0 docker-archive:erpnext_v15.48.0.tar
 
-      - name: Upload to Release
+      - name: 发布到Release
         uses: softprops/action-gh-release@v2
         with:
-          tag_name: v1.2
+          tag_name: v1.3
           files: "*.tar"
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
