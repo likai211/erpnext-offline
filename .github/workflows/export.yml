@@ -7,20 +7,18 @@ jobs:
     steps:
       - name: Pull images
         run: |
-          docker pull redis:8.6-alpine
-          docker pull mariadb:10.11
-          docker pull frappe/erpnext:v15.48.0
-
+          docker pull mariadb:10.6
+          docker pull redis:6-alpine
+          docker pull frappe/erpnext:version-15
       - name: Save to tar
         run: |
-          docker save redis:8.6-alpine -o redis_8.6-alpine.tar
-          docker save mariadb:10.11 -o mariadb_10.11.tar
-          docker save frappe/erpnext:v15.48.0 -o erpnext_v15.48.0.tar
-
+          docker save mariadb:10.6 -o mariadb_10_6.tar
+          docker save redis:6-alpine -o redis_6_alpine.tar
+          docker save frappe/erpnext:version-15 -o erpnext15.tar
       - name: Upload to Release
         uses: softprops/action-gh-release@v2
         with:
-          tag_name: v1.1
+          tag_name: v1.0
           files: "*.tar"
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
